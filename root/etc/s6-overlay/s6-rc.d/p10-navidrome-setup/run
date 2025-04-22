@@ -1,0 +1,59 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+vecho () { if [ "${S6_VERBOSITY:-1}" -gt 0 ]; then echo "[$0] $@"; fi; }
+
+ND_DATAFOLDER="${ND_DATAFOLDER:-/data}";
+ND_CACHEFOLDER="${ND_CACHEFOLDER:-${ND_DATAFOLDER}/cache}";
+ND_MUSICFOLDER="${ND_MUSICFOLDER:-/music}";
+# ND_CONFIGFILE="${ND_CONFIGFILE:-/data/navidrome.toml}"; unset to configure only via envvars
+
+vecho "Ensure configuration directories exist.";
+mkdir -p \
+    ${ND_DATAFOLDER} \
+    ${ND_CACHEFOLDER}/images \
+    ${ND_CACHEFOLDER}/transcoding \
+    ${ND_MUSICFOLDER} \
+    ;
+
+_subst () {
+    sed \
+        -e "s|ND_ADDRESS|${ND_ADDRESS:-0.0.0.0}|g" \
+        -e "s|ND_PORT|${ND_PORT:-4533}|g" \
+        -e "s|ND_BASEURL|${ND_BASEURL:-/}|g" \
+        -e "s|ND_CACHEFOLDER|${ND_CACHEFOLDER}|g" \
+        -e "s|ND_DATAFOLDER|${ND_DATAFOLDER}|g" \
+        -e "s|ND_MUSICFOLDER|${ND_MUSICFOLDER}|g" \
+    $1 > $2;
+}
+# ensure config.toml exists, if set
+if [ ! -z "${ND_CONFIGFILE}" ] \
+&& [ ! -f "${ND_CONFIGFILE}" ];
+then
+    vecho "Setting up default configurations at ${ND_CONFIGFILE}";
+    _subst /defaults/navidrome.toml "${ND_CONFIGFILE}";
+fi;
+
+# fix permissions
+vecho "Fixing permissions.";
+chown -R ${S6_USER:-alpine}:${PGID:-1000} \
+    ${ND_DATAFOLDER} \
+    ${ND_CACHEFOLDER} \
+    ;
+
+# not running -R over musicfolder
+chown ${S6_USER:-alpine}:${PGID:-1000} \
+    $(dirname $ND_CONFIGFILE) \
+    ${ND_CONFIGFILE} \
+    ${ND_MUSICFOLDER} \
+    ;
+
+if [ -n "${NAVIDROME_PERMFIX_MUSICFOLDER}" ]; # may become cumbersome if MUSICFOLDER has large number of files
+then
+    vecho "Fixing permissions on $ND_MUSICFOLDER files.";
+    find "${ND_MUSICFOLDER}" \
+        \! -user ${S6_USER:-alpine} -exec \
+        chown --no-dereference \
+        ${S6_USER:-alpine}:${PGID:-1000} \
+        '{}' +;
+fi;

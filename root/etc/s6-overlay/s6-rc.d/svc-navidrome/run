@@ -1,0 +1,15 @@
+#!/usr/bin/with-contenv bash
+set -e
+
+# unset to configure only via envvars
+# ND_CONFIGFILE=${ND_CONFIGFILE:-/data/navidrome.toml}; # set in Dockerfile
+ND_DATAFOLDER="${ND_DATAFOLDER:-/data}";
+# NAVIDROME_ARGS="${NAVIDROME_ARGS:-}";
+
+cd ${ND_DATAFOLDER} || exit 1;
+
+s6-setuidgid ${S6_USER:-alpine} \
+exec \
+    navidrome \
+    ${ND_CONFIGFILE:+ --configfile $ND_CONFIGFILE } \
+    ${NAVIDROME_ARGS};

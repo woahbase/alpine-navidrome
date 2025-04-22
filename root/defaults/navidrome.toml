@@ -1,0 +1,43 @@
+# Address = 'ND_ADDRESS'
+# Port = ND_PORT
+# BaseUrl = 'ND_BASEURL'
+DefaultTheme = 'Dark'
+
+SessionTimeout = '24h'
+AuthRequestLimit = 5
+AuthWindowLength = '20s'
+
+DataFolder = 'ND_DATAFOLDER'
+MusicFolder = 'ND_MUSICFOLDER'
+
+CacheFolder = 'ND_CACHEFOLDER'
+TranscodingCacheSize = '150MiB'
+ImageCacheSize = '100MiB'
+
+LogLevel = 'info'
+EnableLogRedacting = true
+
+Scanner.Extractor = 'ffmpeg'
+ScanSchedule = '@every 24h'
+
+AutoImportPlaylists = true
+EnableCoverAnimation = false
+EnableDownloads = false
+EnableReplayGain = true
+EnableTranscodingConfig = false
+RecentlyAddedByModTime = false
+SearchFullString = false
+
+EnableFavourites = true
+EnableStarRating = false
+EnableUserEditing = true
+# PasswordEncryptionKey = ''
+# ReverseProxyWhitelist = ''
+
+Prometheus.Enabled = true
+# Prometheus.MetricsPath = "/metrics"
+
+# Spotify.ID = ''
+# Spotify.Secret = ''
+
+EnableInsightsCollector = false
