@@ -10,10 +10,10 @@ ND_MUSICFOLDER="${ND_MUSICFOLDER:-/music}";
 
 vecho "Ensure configuration directories exist.";
 mkdir -p \
-    ${ND_DATAFOLDER} \
-    ${ND_CACHEFOLDER}/images \
-    ${ND_CACHEFOLDER}/transcoding \
-    ${ND_MUSICFOLDER} \
+    "${ND_DATAFOLDER}" \
+    "${ND_CACHEFOLDER}/images" \
+    "${ND_CACHEFOLDER}/transcoding" \
+    "${ND_MUSICFOLDER}" \
     ;
 
 _subst () {
@@ -35,22 +35,28 @@ then
 fi;
 
 # fix permissions
-vecho "Fixing permissions.";
-chown -R ${S6_USER:-alpine}:${PGID:-1000} \
-    ${ND_DATAFOLDER} \
-    ${ND_CACHEFOLDER} \
-    ;
-
-# not running -R over musicfolder
-chown ${S6_USER:-alpine}:${PGID:-1000} \
-    $(dirname $ND_CONFIGFILE) \
-    ${ND_CONFIGFILE} \
-    ${ND_MUSICFOLDER} \
-    ;
-
-if [ -n "${NAVIDROME_PERMFIX_MUSICFOLDER}" ]; # may become cumbersome if MUSICFOLDER has large number of files
+if [ -z "${NAVIDROME_SKIP_PERMFIX}" ] \
+&& [ "X${EUID}" == "X0" ]; # requires root
 then
-    vecho "Fixing permissions on $ND_MUSICFOLDER files.";
+    vecho "Fixing permissions.";
+    chown -R ${S6_USER:-alpine}:${PGID:-1000} \
+        "${ND_DATAFOLDER}" \
+        "${ND_CACHEFOLDER}" \
+        ;
+
+    # not running -R over musicfolder
+    chown ${S6_USER:-alpine}:${PGID:-1000} \
+        "$(dirname ${ND_CONFIGFILE})" \
+        "${ND_CONFIGFILE}" \
+        "${ND_MUSICFOLDER}" \
+        ;
+fi;
+
+# may become cumbersome if MUSICFOLDER has large number of files
+if [ -n "${NAVIDROME_PERMFIX_MUSICFOLDER}" ] \
+&& [ "X${EUID}" == "X0" ]; # requires root
+then
+    vecho "Fixing permissions on ${ND_MUSICFOLDER} files.";
     find "${ND_MUSICFOLDER}" \
         \! -user ${S6_USER:-alpine} -exec \
         chown --no-dereference \

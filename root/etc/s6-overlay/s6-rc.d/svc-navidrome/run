@@ -1,6 +1,8 @@
 #!/usr/bin/with-contenv bash
 set -e
 
+usercmd () { if [ "X${EUID}" != "X0" ]; then ${1} "${@:2}"; else s6-setuidgid ${PUID:-1000}:${PGID:-1000} ${1} "${@:2}"; fi; }
+
 # unset to configure only via envvars
 # ND_CONFIGFILE=${ND_CONFIGFILE:-/data/navidrome.toml}; # set in Dockerfile
 ND_DATAFOLDER="${ND_DATAFOLDER:-/data}";
@@ -8,7 +10,7 @@ ND_DATAFOLDER="${ND_DATAFOLDER:-/data}";
 
 cd ${ND_DATAFOLDER} || exit 1;
 
-s6-setuidgid ${S6_USER:-alpine} \
+usercmd \
 exec \
     navidrome \
     ${ND_CONFIGFILE:+ --configfile $ND_CONFIGFILE } \
