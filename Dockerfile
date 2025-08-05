@@ -24,6 +24,7 @@ RUN set -xe \
         curl \
         ffmpeg \
         mpv \
+        sqlite \
         # taglib \
     && curl -jSLN \
         https://github.com/navidrome/navidrome/releases/download/v${VERSION}/navidrome_${VERSION}_${SRCARCH}.tar.gz \
