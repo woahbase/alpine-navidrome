@@ -31,6 +31,7 @@ RUN set -xe \
         | tar xvz -C /usr/local/bin \
     && apk del --purge \
         curl \
+    && touch /.nddockerenv \
     && rm -f /var/cache/apk/* /tmp/*
 #
 COPY root/ /
