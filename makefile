@@ -31,7 +31,6 @@ TESTCMD   := \
 
 SKIP_loong64  := 1
 SKIP_ppc64le  := 1
-SKIP_riscv64  := 1
 SKIP_s390x    := 1
 # -- }}}
 
@@ -524,15 +523,15 @@ endef
 
 # maps binary platform to ARCH tags
 SRC_ARCH_MAP := \
-	'aarch64') echo -n 'linux_arm64' ;; \
-	'armhf'  ) echo -n 'linux_armv6' ;; \
-	'armv7l' ) echo -n 'linux_armv7' ;; \
-	'i386'   ) echo -n 'linux_386'   ;; \
-	'loong64') echo -n 'N/A'         ;; \
-	'ppc64le') echo -n 'N/A'         ;; \
-	'riscv64') echo -n 'N/A'         ;; \
-	's390x'  ) echo -n 'N/A'         ;; \
-	'x86_64' ) echo -n 'linux_amd64' ;; \
+	'aarch64') echo -n 'linux_arm64'  ;; \
+	'armhf'  ) echo -n 'linux_armv6'  ;; \
+	'armv7l' ) echo -n 'linux_armv7'  ;; \
+	'i386'   ) echo -n 'linux_386'    ;; \
+	'loong64') echo -n 'N/A'          ;; \
+	'ppc64le') echo -n 'N/A'          ;; \
+	'riscv64') echo -n 'linux_riscv64';; \
+	's390x'  ) echo -n 'N/A'          ;; \
+	'x86_64' ) echo -n 'linux_amd64'  ;; \
     #
 define get_src_arch
 $(shell case "$(ARCH)" in $(SRC_ARCH_MAP) esac)
