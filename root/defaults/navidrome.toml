@@ -17,7 +17,6 @@ ImageCacheSize = '100MiB'
 LogLevel = 'info'
 EnableLogRedacting = true
 
-Scanner.Extractor = 'ffmpeg'
 ScanSchedule = '@every 24h'
 
 AutoImportPlaylists = true
@@ -26,7 +25,7 @@ EnableDownloads = false
 EnableReplayGain = true
 EnableTranscodingConfig = false
 RecentlyAddedByModTime = false
-SearchFullString = false
+Search.FullString = false
 
 EnableFavourites = true
 EnableStarRating = false
