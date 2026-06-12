@@ -14,7 +14,8 @@ ENV \
     ND_MUSICFOLDER=/music \
     ND_BASEURL="/navidrome" \
     ND_PORT=4533 \
-    ND_ENABLEINSIGHTSCOLLECTOR=false
+    ND_ENABLEINSIGHTSCOLLECTOR=false \
+    ND_ENABLEWEBPENCODING=true
     # ND_SCANSCHEDULE=1h \
     # ND_LOGLEVEL=info \
     # ND_SESSIONTIMEOUT=24h \
@@ -23,9 +24,18 @@ RUN set -xe \
     && apk add -Uu --no-cache --purge \
         curl \
         ffmpeg \
+        libwebp \
+        libwebpdemux \
+        libwebpmux \
         mpv \
         sqlite \
         # taglib \
+    && for lib in libwebp libwebpdemux libwebpmux; \
+        do \
+            target=$(ls /usr/lib/$lib.so.* 2>/dev/null | head -1) \
+            && [ -n "$target" ] \
+            && ln -sf "$target" /usr/lib/$lib.so; \
+        done \
     && curl -jSLN \
         https://github.com/navidrome/navidrome/releases/download/v${VERSION}/navidrome_${VERSION}_${SRCARCH}.tar.gz \
         | tar xvz -C /usr/local/bin \
